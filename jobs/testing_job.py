@@ -1,4 +1,4 @@
-from nautobot.extras.jobs import Job
+from nautobot.apps.jobs import Job
 
 class MemoryIntensiveJob(Job):
     description = "Job that allocates approximately 2GB of memory for testing purposes."

@@ -9,21 +9,20 @@ def consume_memory(size_in_mb):
 
 
 class MemoryIntensiveJob(Job):
-    request_memory = IntegerVar(default=1024)
-    number_of_steps = IntegerVar(default=2)
-    delay = IntegerVar(default=60)
+    request_memory_megabytes = IntegerVar(default=1024)
+    steps_count = IntegerVar(default=2)
+    step_delay_seconds = IntegerVar(default=60)
 
     class Meta:  # type: ignore
-        description = "Job that allocates approximately 2GB of memory for testing purposes."
+        description = "Job consuming memory in steps for testing"
 
-    def run(self, request_memory, number_of_steps, delay):
+    def run(self, request_memory_megabytes, steps_count, step_delay_seconds):
         mem_blocks = []
-        mb_per_step = request_memory // number_of_steps
+        mb_per_step = request_memory_megabytes // steps_count
 
-        for step in range(number_of_steps):
-            self.logger.info(f"Step {step + 1}/{number_of_steps}")
+        for step in range(steps_count):
+            self.logger.info(f"Step {step + 1}/{steps_count}, consuming {mb_per_step * step + 1}/{request_memory_megabytes} MB of memory")
             mem_blocks.append(consume_memory(mb_per_step))
-            time.sleep(delay)
+            time.sleep(step_delay_seconds)
 
-        print("Job completed successfully.")
-        return f"Job completed successfully after {number_of_steps} steps."
+        self.logger.info("Job completed successfully")
